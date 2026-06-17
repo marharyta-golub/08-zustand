@@ -4,12 +4,11 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import toast, { Toaster } from 'react-hot-toast';
+import Link from 'next/link';
 
 import { fetchNotes } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
 import Pagination from '@/components/Pagination/Pagination';
-import Modal from '@/components/Modal/Modal';
-import NoteForm from '@/components/NoteForm/NoteForm';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Loader from '@/components/Loader/Loader';
 import css from './NotesPage.module.css';
@@ -21,7 +20,6 @@ interface NotesClientProps {
 export default function NotesClient({ initialTag = 'all' }: NotesClientProps) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const NOTES_PER_PAGE = 12;
 
@@ -61,20 +59,15 @@ export default function NotesClient({ initialTag = 'all' }: NotesClientProps) {
             onPageChange={setCurrentPage}
           />
         )}
-        <button className={css.button} onClick={() => setIsModalOpen(true)}>
+        <Link href="/notes/action/create" className={css.button}>
           Create note +
-        </button>
+        </Link>
       </div>
 
       {isLoading && <Loader />}
 
       {!isLoading && notesList.length > 0 && <NoteList notes={notesList} />}
 
-      {isModalOpen && (
-        <Modal onCloseModal={() => setIsModalOpen(false)}>
-          <NoteForm onCancelForm={() => setIsModalOpen(false)} />
-        </Modal>
-      )}
       <Toaster position="top-center" reverseOrder={false} />
     </div>
   );

@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import {
   dehydrate,
   HydrationBoundary,
@@ -8,6 +9,29 @@ import NotesClient from './Notes.client';
 
 interface FilterNotesPageProps {
   params: Promise<{ slug?: string[] }>;
+}
+
+export async function generateMetadata({
+  params,
+}: FilterNotesPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const activeTag = slug && slug[0] !== 'all' ? slug[0] : '';
+  const filterName = activeTag || 'All Notes';
+
+  return {
+    title: `${filterName} | NoteHub`,
+    description: `Viewing notes filtered by category: ${filterName}.`,
+    openGraph: {
+      title: `${filterName} | NoteHub`,
+      description: `Viewing notes filtered by category: ${filterName}.`,
+      url: `https://07-routing-nextjs-swart.vercel.app/notes/filter/${activeTag || 'all'}`,
+      images: [
+        {
+          url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+        },
+      ],
+    },
+  };
 }
 
 export default async function FilterNotesPage({
