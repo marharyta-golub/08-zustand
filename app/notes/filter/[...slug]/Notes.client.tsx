@@ -1,7 +1,7 @@
 'use client';
 
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import toast, { Toaster } from 'react-hot-toast';
 import Link from 'next/link';
@@ -40,9 +40,13 @@ export default function NotesClient({ initialTag = 'all' }: NotesClientProps) {
     placeholderData: keepPreviousData,
   });
 
-  if (isError) {
-    toast.error('Failed to load notes from the server.', { id: 'fetch-error' });
-  }
+  useEffect(() => {
+    if (isError) {
+      toast.error('Failed to load notes from the server.', {
+        id: 'fetch-error',
+      });
+    }
+  }, [isError]);
 
   const notesList = data?.notes || [];
   const totalPages = data?.totalPages || 1;
